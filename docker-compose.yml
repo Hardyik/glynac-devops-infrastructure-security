@@ -1,0 +1,14 @@
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis-dev587
+    command: redis-server
+    networks:
+      - redis-net
+    ports:
+      - "127.0.0.1:6379:6379"
+
+networks:
+  redis-net:
+    driver: bridge
