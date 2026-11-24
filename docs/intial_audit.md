@@ -1,26 +1,28 @@
 
-# DEV-587: Redis Initial Security Audit
+## Initial Security Audit Results
 
-## Environment
-- Redis Version: 7
-- Deployment: Docker
-- Operating System: Windows
+Redis Version: 7.4.12
 
-## Initial Security Checks
+| Security Area | Observed Configuration | Finding |
+|---|---|---|
+| Authentication | requirepass empty | No password configured |
+| Protected Mode | no | Disabled |
+| Network Binding | * -::* | All interfaces |
+| Default ACL | nopass +@all | Unrestricted default user |
+| Deployment | Docker | Localhost port mapping |
 
-| Security Area | Initial Observation |
-|---|---|
-| Authentication | No password configured |
-| Protected Mode | To be verified |
-| Network Binding | To be verified |
-| ACL | Default user permissions to be reviewed |
-| Server Information | Collected |
+## Identified Risks
 
-## Objective
+1. Unauthorized Redis access without authentication.
+2. Protected mode disabled.
+3. Redis listens on wildcard interfaces inside the container.
+4. Default user has unrestricted command permissions.
 
-Identify default Redis security settings and
-implement appropriate security hardening.
+## Recommended Remediation
 
-## Status
-
-Initial audit in progress.
+- Configure strong authentication.
+- Enable protected mode.
+- Restrict network binding.
+- Implement Redis ACL users with least privilege.
+- Restrict dangerous commands where appropriate.
+- Validate security changes with redis-cli.
