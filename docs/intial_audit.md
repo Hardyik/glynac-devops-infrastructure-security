@@ -1,54 +1,91 @@
 
-## Initial Security Audit Results
+# DEV-587 – Redis Security Hardening
 
-Redis Version: 7.4.12
+## 1. Project Overview
 
-| Security Area | Observed Configuration | Finding |
-|---|---|---|
-| Authentication | requirepass empty | No password configured |
-| Protected Mode | no | Disabled |
-| Network Binding | * -::* | All interfaces |
-| Default ACL | nopass +@all | Unrestricted default user |
-| Deployment | Docker | Localhost port mapping |
+Task: DEV-587 – Redis Security Hardening
+Team: Nyoman's Squad
+Department: Glynac
+Technology: Redis 7.4.12, Docker
+Environment: Windows with Docker Desktop
 
-## Identified Risks
+## 2. Objective
 
-1. Unauthorized Redis access without authentication.
-2. Protected mode disabled.
-3. Redis listens on wildcard interfaces inside the container.
-4. Default user has unrestricted command permissions.
+Identify Redis security weaknesses and implement
+security controls to protect authentication,
+network access, commands and resources.
 
-## Recommended Remediation
+## 3. Initial Security Audit
 
-- Configure strong authentication.
-- Enable protected mode.
-- Restrict network binding.
-- Implement Redis ACL users with least privilege.
-- Restrict dangerous commands where appropriate.
-- Validate security changes with redis-cli.
+| Security Area | Initial Finding |
+|---|---|
+| Authentication | No password configured |
+| Protected Mode | Disabled |
+| Network Binding | Wildcard interfaces |
+| Default ACL | Unrestricted access |
+| Dangerous Commands | Not restricted |
 
-## Redis Security Hardening Results
+## 4. Security Improvements Implemented
 
 ### Authentication
-- Password authentication implemented.
-- Default user disabled.
-- Dedicated application user created.
+- Configured password-based authentication.
+- Disabled the default Redis user.
+- Created a dedicated application user.
 
 ### Access Control
-- Application user restricted to app:* keys.
-- Only selected Redis commands permitted.
-- Unauthorized key access rejected.
+- Restricted application access to app:* keys.
+- Allowed only required Redis commands.
+- Blocked administrative commands for appuser.
 
-### Validation Results
+### Network Security
+- Enabled Redis protected mode.
+- Restricted published Docker port to localhost.
+- Used an isolated Docker bridge network.
 
-| Test | Expected Result | Status |
+### Command Security
+- Disabled FLUSHALL.
+- Disabled FLUSHDB.
+- Restricted CONFIG and SHUTDOWN through ACL.
+
+### Resource Protection
+- Maximum clients: 100
+- Maximum memory: 128 MB
+- Memory policy: noeviction
+- Idle connection timeout: 300 seconds
+
+## 5. Security Validation
+
+| Test | Expected Result | Outcome |
 |---|---|---|
-| Unauthenticated PING | NOAUTH | Pending |
+| Unauthenticated PING | NOAUTH | PASS |
 | Authenticated PING | PONG | PASS |
 | SET app:test | OK | PASS |
 | GET app:test | Value returned | PASS |
 | SET admin:test | NOPERM | PASS |
+| FLUSHALL | NOPERM | PASS |
+| FLUSHDB | Command unavailable | PASS |
+| CONFIG | NOPERM | PASS |
+| SHUTDOWN | NOPERM | PASS |
+| Docker port mapping | Localhost only | PASS |
 
-### Network Security
-- Redis bound to container interfaces.
-- Docker host port restricted to localhost.
+## 6. Conclusion
+
+Redis security was improved through authentication,
+ACL-based access control, network restrictions,
+command restrictions and resource limits.
+
+All listed application-level security tests
+produced the expected results.
+
+## 7. Limitations and Future Improvements
+
+- Configure TLS for deployments requiring encrypted
+  network communication.
+- Integrate Redis monitoring and alerting.
+- Review backup and recovery procedures.
+- Conduct vulnerability scanning.
+- Review resource limits against production workloads.
+
+Note: This implementation was tested in a local
+Docker environment and has not been deployed
+to Glynac production infrastructure.

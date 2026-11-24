@@ -1,73 +1,92 @@
-# Glynac – DevOps, Infrastructure & Security
 
-**Internship Department:** Glynac  
-**Squad:** Nyoman's Squad  
-**Mentor:** Nyoman  
-**Work Area:** DevOps, Infrastructure, Monitoring & Security
+# DEV-587 – Redis Security Hardening
 
-## About This Repository
+A practical Redis security hardening implementation
+using Docker and Redis ACL.
 
-This repository documents my internship learning, assigned tasks, practical implementations, technical research and documentation in DevOps, infrastructure, monitoring and security.
-
-## Areas of Work
-
-### 1. Documentation & Infrastructure Knowledge
-- HashiCorp Stack Documentation
-- APISIX Security Configuration Audit
-- Redis Security Hardening
-- Grafana Dashboard Creation
-- Log Aggregation Strategy
-- Consul Service Mesh
-- SSH Hardening Guide
-
-### 2. Monitoring & Database Operations
-- Prometheus Log Audit
-- Loki Stream Optimization
-- Patroni Cluster Restore
-- PostgreSQL VACUUM
-- MariaDB Cluster
-
-### 3. Security & Infrastructure Research
-- Open Port Scan & Service Mapping
-- Security Tool Research & Comparison
-- OWASP Top 10 Research & Mitigation Mapping
-
-### 4. Security Enablement
-- Security Awareness Training Materials
-- Automated Security Checks in CI/CD
-- Validate & Remediate Unpinned GitHub Actions
-
-### 5. Acumen Infrastructure
-- Improvement of LinkedIn Hyper-V
-- Deploy Acumen Infrastructure and Migration
-
-## Skills & Technologies
-- Linux
+## Technologies
+- Redis 7.4.12
 - Docker
-- Git & GitHub
-- PostgreSQL
-- Redis
-- Prometheus
-- Grafana
-- Loki
-- CI/CD
-- GitHub Actions
-- Infrastructure Security
+- Docker Compose
+- PowerShell
+- Redis ACL
 
-## Task Documentation Format
+## Features
+- Password authentication
+- Default user disabled
+- Restricted application user
+- Key-level access restrictions
+- Protected mode enabled
+- Localhost-only port publishing
+- Dangerous command restrictions
+- Memory and connection limits
 
-Each assigned task will include:
-1. Objective
-2. Requirements
-3. Tools and technologies
-4. Implementation steps
-5. Commands and configurations
-6. Testing and verification
-7. Screenshots and evidence
-8. Challenges and learnings
+## Project Structure
+
+```text
+.
+├── config/
+│   ├── redis.conf
+│   └── users.acl
+├── docs/
+│   └── initial-audit.md
+├── screenshots/
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+## Setup
+
+1. Install Docker Desktop.
+2. Clone this repository.
+3. Create your local config/users.acl file.
+4. Configure a Redis ACL user with a strong password.
+5. Start Redis:
+
+```powershell
+docker compose up -d
+```
+
+6. Check the container:
+
+```powershell
+docker ps
+```
+
+## Security Testing
+
+Test authentication:
+
+```powershell
+docker exec redis-dev587 redis-cli PING
+```
+
+Expected: NOAUTH.
+
+Test authenticated access:
+
+```powershell
+docker exec -it redis-dev587 redis-cli --user appuser --askpass
+```
+
+Then:
+
+```redis
+PING
+SET app:test "Redis secured"
+GET app:test
+```
+
+## Security Documentation
+
+See `docs/initial-audit.md` for the audit findings,
+implemented controls and validation results.
 
 ## Important
 
-All infrastructure changes, security testing and scans will be performed only within mentor-approved environments and authorized scopes. No real credentials, API keys, confidential configurations or production secrets will be committed.
+The ACL file contains credential material and must
+never be committed to Git.
 
-**Status:** Internship work in progress.
+This project is a local security demonstration.
+Production deployment requires additional review.
