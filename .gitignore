@@ -1,0 +1,4 @@
+config/users.acl
+.env
+.env.*
+*.log
