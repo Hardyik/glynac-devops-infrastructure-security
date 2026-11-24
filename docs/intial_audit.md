@@ -26,3 +26,29 @@ Redis Version: 7.4.12
 - Implement Redis ACL users with least privilege.
 - Restrict dangerous commands where appropriate.
 - Validate security changes with redis-cli.
+
+## Redis Security Hardening Results
+
+### Authentication
+- Password authentication implemented.
+- Default user disabled.
+- Dedicated application user created.
+
+### Access Control
+- Application user restricted to app:* keys.
+- Only selected Redis commands permitted.
+- Unauthorized key access rejected.
+
+### Validation Results
+
+| Test | Expected Result | Status |
+|---|---|---|
+| Unauthenticated PING | NOAUTH | Pending |
+| Authenticated PING | PONG | PASS |
+| SET app:test | OK | PASS |
+| GET app:test | Value returned | PASS |
+| SET admin:test | NOPERM | PASS |
+
+### Network Security
+- Redis bound to container interfaces.
+- Docker host port restricted to localhost.
